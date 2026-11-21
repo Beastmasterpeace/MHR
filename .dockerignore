@@ -1,0 +1,20 @@
+node_modules
+.next
+.git
+db
+*.log
+dev.log
+server.log
+
+# فایل‌های محلی سندباکس — جزو پروژه نیستند
+SideRail
+download
+upload
+skills
+examples
+tests
+core
+.zscripts
+mini-services
+Caddyfile
+.env

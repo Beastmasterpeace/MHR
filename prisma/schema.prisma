@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// حساب مدیر پنل (فقط یکی)
+model Admin {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// کاربران پنل (مشترکین)
+model PanelUser {
+  id         String    @id @default(cuid())
+  name       String    @unique
+  note       String?
+  uuid       String?   @unique // شناسه کلاینت برای VLESS/VMess و رمز Trojan
+  quotaBytes Float     @default(0)
+  unlimited  Boolean   @default(false)
+  usedBytes  Float     @default(0)
+  expiresAt  DateTime?
+  active     Boolean   @default(true)
+  subToken   String    @unique @default(cuid())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+// اینباندهای پروتکل پروکسی (VLESS/VMess/Trojan)
+model Inbound {
+  id               String   @id @default(cuid())
+  name             String
+  protocol         String   @default("vless") // vless | vmess | trojan
+  port             Int      @unique
+  tlsEnabled       Boolean  @default(true)
+  sni              String?
+  fragmentEnabled  Boolean  @default(false)
+  fragmentSize     String?
+  fragmentInterval String?
+  echEnabled       Boolean  @default(false)
+  enabled          Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+// لاگ فعالیت‌ها
+model ActivityLog {
+  id        String   @id @default(cuid())
+  type      String   @default("info") // auth | user | inbound | system | info | warn
+  message   String
+  meta      String?
+  createdAt DateTime @default(now())
+}
+
+// تنظیمات پنل به‌صورت key/value
+model Setting {
+  key   String @id
+  value String
+}
